@@ -8,25 +8,31 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 
 public class EditActivity extends AppCompatActivity {
     EditText editValue;
     Button saveButton;
     String newText;
+    NumberPicker numberPicker;
     int position;
-    int prio;
+    String prio;
 
     private void instantiateVariables(){
         editValue = findViewById(R.id.editValue);
         saveButton = findViewById(R.id.saveButton);
+        numberPicker = findViewById(R.id.numberPicker);
         Intent i = getIntent();
         newText = i.getStringExtra(MainActivity.KEY_ITEM_TEXT);
         position = i.getIntExtra(MainActivity.KEY_ITEM_POSITION, -1);
-        prio = i.getIntExtra(MainActivity.KEY_ITEM_PRIORITY, -1);
+        prio = i.getStringExtra(MainActivity.KEY_ITEM_PRIORITY);
     }
 
     private void setDefaultValue(){
         editValue.setText(newText);
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(5);
+        numberPicker.setValue(Integer.parseInt(prio));
     }
 
     @Override
@@ -42,7 +48,7 @@ public class EditActivity extends AppCompatActivity {
                 Intent i = new Intent();
                 i.putExtra(MainActivity.KEY_ITEM_TEXT, editValue.getText().toString());
                 i.putExtra(MainActivity.KEY_ITEM_POSITION, position);
-                i.putExtra(MainActivity.KEY_ITEM_PRIORITY, prio);
+                i.putExtra(MainActivity.KEY_ITEM_PRIORITY, String.valueOf(numberPicker.getValue()));
                 setResult(RESULT_OK, i);
 
                 finish();

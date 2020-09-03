@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent i = new Intent(MainActivity.this, EditActivity.class);
                 i.putExtra(KEY_ITEM_TEXT, items.get(position).getText());
                 i.putExtra(KEY_ITEM_POSITION, position);
+                i.putExtra(KEY_ITEM_PRIORITY, items.get(position).getPrio());
                 startActivityForResult(i, RESULT_CODE);
             }
         };
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String text = etItem.getText().toString();
                 int prio = numberPicker.getValue();
-                ListItem listItem = new ListItem(text, prio);
+                ListItem listItem = new ListItem(text, String.valueOf(prio));
                 items.add(listItem);
                 itemsAdapter.notifyItemInserted(items.size() - 1);
                 etItem.setText("");
@@ -104,11 +105,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(data == null)
+            return;
         int position = data.getIntExtra(KEY_ITEM_POSITION, -1);
-        int priority = data.getIntExtra(KEY_ITEM_PRIORITY, -1);
+        String priority = data.getStringExtra(KEY_ITEM_PRIORITY);
         String text = data.getStringExtra(KEY_ITEM_TEXT);
         Log.e("post", String.valueOf(position));
-        if (position >= 0) {
+        if ( position >= 0) {
             items.set(position, new ListItem(text, priority));
             itemsAdapter.notifyItemChanged(position);
             saveItems();
@@ -124,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             ArrayList<String> temp = new ArrayList<>(FileUtils.readLines(getDataFile(), Charset.defaultCharset()));
             for(int i = 0; i < temp.size(); i++){
-                items.add(new ListItem(temp.get(i), 1));
+                items.add(new ListItem(temp.get(i), "1"));
             }
         } catch (IOException e) {
             Log.e("MainActivity", "Error reading items", e);

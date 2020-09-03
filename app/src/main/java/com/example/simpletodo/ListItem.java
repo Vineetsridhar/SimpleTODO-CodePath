@@ -2,9 +2,9 @@ package com.example.simpletodo;
 
 public class ListItem {
     String text;
-    int prio;
+    String prio;
 
-    public ListItem(String text, int prio){
+    public ListItem(String text, String prio){
         this.text = text;
         this.prio = prio;
     }
@@ -17,8 +17,8 @@ public class ListItem {
         this.text = text;
     }
 
-    public int getPrio() {
-        return prio;
+    public String getPrio() {
+        return String.valueOf(prio);
     }
 
     @Override
