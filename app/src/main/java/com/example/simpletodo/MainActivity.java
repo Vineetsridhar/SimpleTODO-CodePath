@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,6 +37,19 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY_ITEM_PRIORITY = "item_prio";
     public static final int RESULT_CODE = 20;
 
+    private void notifyListChanged(){
+        //With small a small number of items, the inefficiency won't be noticeable
+        Collections.sort(items, new Comparator<ListItem>() {
+            @Override
+            public int compare(ListItem o1, ListItem o2) {
+                Integer prio1 = Integer.parseInt(o1.getPrio());
+                Integer prio2 = Integer.parseInt(o2.getPrio());
+
+                return prio2.compareTo(prio1);
+            }
+        });
+        itemsAdapter.notifyDataSetChanged();
+    }
 
     private void instantiateVariables() {
         //Link to XML
@@ -79,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 int prio = numberPicker.getValue();
                 ListItem listItem = new ListItem(text, String.valueOf(prio));
                 items.add(listItem);
-                itemsAdapter.notifyItemInserted(items.size() - 1);
+                notifyListChanged();
                 etItem.setText("");
                 Toast.makeText(getApplicationContext(), R.string.itemAdded, Toast.LENGTH_SHORT).show();
                 numberPicker.setValue(1);
@@ -99,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
         instantiateVariables();
         populateList();
         setListeners();
-
     }
 
     @Override
@@ -113,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e("post", String.valueOf(position));
         if ( position >= 0) {
             items.set(position, new ListItem(text, priority));
-            itemsAdapter.notifyItemChanged(position);
+            notifyListChanged();
             saveItems();
             Toast.makeText(getApplicationContext(), R.string.itemChanged, Toast.LENGTH_SHORT).show();
         }

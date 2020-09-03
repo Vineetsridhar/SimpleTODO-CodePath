@@ -1,6 +1,7 @@
 package com.example.simpletodo;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import java.util.List;
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder>{
     List<ListItem> items;
     ListListener listListener;
+    int colors[] = {-1, Color.RED, Color.YELLOW, Color.GRAY, Color.GREEN, Color.BLUE}; //Values range from 1 - 5
+    
 
     public interface ListListener {
         void onItemLongClicked(int position);
@@ -60,6 +63,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder>{
         public void bind(ListItem item){
             tvText.setText(item.getText());
             tvPriority.setText(item.getPrio());
+            tvPriority.setTextColor(colors[Integer.parseInt(item.getPrio())]);
             container.setOnLongClickListener(new View.OnLongClickListener() {
                  @Override
                  public boolean onLongClick(View v) {
