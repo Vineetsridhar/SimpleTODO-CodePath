@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import io.paperdb.Paper;
+
 public class MainActivity extends AppCompatActivity {
     List<ListItem> items = new ArrayList<>();
     Button btnAdd;
@@ -35,9 +37,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY_ITEM_TEXT = "item_text";
     public static final String KEY_ITEM_POSITION = "item_position";
     public static final String KEY_ITEM_PRIORITY = "item_prio";
+    public static final String PAPER_ITEMS_KEY = "paper_items_key";
     public static final int RESULT_CODE = 20;
 
-    private void notifyListChanged(){
+    private void notifyListChanged() {
         //With small a small number of items, the inefficiency won't be noticeable
         Collections.sort(items, new Comparator<ListItem>() {
             @Override
@@ -57,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         etItem = findViewById(R.id.etItem);
         rvItems = findViewById(R.id.rvItems);
         numberPicker = findViewById(R.id.numberPicker);
+
+        Paper.init(getApplicationContext());
 
         loadItems();
     }
@@ -119,13 +124,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(data == null)
+        if (data == null)
             return;
         int position = data.getIntExtra(KEY_ITEM_POSITION, -1);
         String priority = data.getStringExtra(KEY_ITEM_PRIORITY);
         String text = data.getStringExtra(KEY_ITEM_TEXT);
         Log.e("post", String.valueOf(position));
-        if ( position >= 0) {
+        if (position >= 0) {
             items.set(position, new ListItem(text, priority));
             notifyListChanged();
             saveItems();
@@ -133,27 +138,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private File getDataFile() {
-        return new File(getFilesDir(), "data.txt");
-    }
 
     private void loadItems() {
-        try {
-            ArrayList<String> temp = new ArrayList<>(FileUtils.readLines(getDataFile(), Charset.defaultCharset()));
-            for(int i = 0; i < temp.size(); i++){
-                items.add(new ListItem(temp.get(i), "1"));
-            }
-        } catch (IOException e) {
-            Log.e("MainActivity", "Error reading items", e);
-            items = new ArrayList<>();
-        }
+        items = Paper.book().read(PAPER_ITEMS_KEY, new ArrayList<ListItem>());
     }
 
     private void saveItems() {
-        try {
-            FileUtils.writeLines(getDataFile(), items);
-        } catch (IOException e) {
-            Log.e("MainActivity", "Error writing items", e);
-        }
+        Paper.book().write(PAPER_ITEMS_KEY, items);
     }
 }

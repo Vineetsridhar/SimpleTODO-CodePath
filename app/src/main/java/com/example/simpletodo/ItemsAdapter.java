@@ -62,6 +62,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder>{
 
         public void bind(ListItem item){
             tvText.setText(item.getText());
+            tvText.setTextColor(colors[Integer.parseInt(item.getPrio())]);
             tvPriority.setText(item.getPrio());
             tvPriority.setTextColor(colors[Integer.parseInt(item.getPrio())]);
             container.setOnLongClickListener(new View.OnLongClickListener() {
